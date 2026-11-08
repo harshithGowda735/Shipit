@@ -12,7 +12,7 @@ redis_client = Redis.from_url(
 
 def check_postgres() -> bool:
     with engine.connect() as connection:
-        connection.execute(text("SELECT 1"))
+        connection.execute(text("SELECT 1")).scalar_one()
 
     return True
 

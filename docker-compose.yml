@@ -1,9 +1,8 @@
 services:
   backend:
     build: ./backend
-    container_name: shipit-backend
     ports:
-      - "8000:8000"
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
     environment:
       DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in .env}
       REDIS_URL: "redis://redis:6379/0"
@@ -15,13 +14,12 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: shipit-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
       POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -32,9 +30,8 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: shipit-redis
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s

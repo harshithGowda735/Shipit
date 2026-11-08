@@ -20,6 +20,23 @@ FastAPI service backed by PostgreSQL and Redis.
 PostgreSQL and Redis ports are bound to localhost for development access only;
 the backend reaches both services over the private Compose network.
 
+## Database migrations
+
+The backend uses Alembic for schema changes. From the repository root, apply
+pending production migrations with:
+
+```sh
+docker compose exec backend alembic upgrade head
+```
+
+Migrations are deliberately not run automatically during API startup. Create
+new revisions from `backend/` with
+`.venv/bin/alembic revision --autogenerate -m "describe the schema change"`.
+Review generated revisions before applying them; model classes must be imported
+from `app.models` so they are registered in `Base.metadata`.
+The reversible smoke-test migration is isolated under `backend/tests/migrations`
+and uses its own Alembic version table; it is not part of application upgrades.
+
 To stop the stack without deleting the database volume, run
 `docker compose down`.
 

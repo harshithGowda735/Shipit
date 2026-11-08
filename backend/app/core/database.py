@@ -1,19 +1,21 @@
+from collections.abc import Generator
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.core.config import settings
 
 
 engine = create_engine(
     settings.DATABASE_URL,
-    pool_pre_ping=True
+    pool_pre_ping=True,
 )
 
 
-SessionLocal = sessionmaker(
+SessionLocal: sessionmaker[Session] = sessionmaker(
     autocommit=False,
     autoflush=False,
-    bind=engine
+    bind=engine,
 )
 
 
@@ -21,10 +23,10 @@ class Base(DeclarativeBase):
     pass
 
 
-def get_db():
-    db = SessionLocal()
+def get_db() -> Generator[Session, None, None]:
+    session = SessionLocal()
 
     try:
-        yield db
+        yield session
     finally:
-        db.close()
+        session.close()
