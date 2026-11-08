@@ -17,6 +17,9 @@ FastAPI service backed by PostgreSQL and Redis.
    `http://localhost:8000/health/dependencies` for PostgreSQL and Redis status.
    Dependency failures return HTTP 503 and are logged by the backend.
 
+PostgreSQL and Redis ports are bound to localhost for development access only;
+the backend reaches both services over the private Compose network.
+
 To stop the stack without deleting the database volume, run
 `docker compose down`.
 
