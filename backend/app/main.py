@@ -2,6 +2,7 @@ import logging
 
 from fastapi import FastAPI, HTTPException
 
+from app.api.routes.auth import router as auth_router
 from app.core.connections import check_postgres, check_redis
 
 logger = logging.getLogger(__name__)
@@ -11,6 +12,8 @@ app = FastAPI(
     description="Proof of Engineering Assessment Platform",
     version="0.1.0",
 )
+
+app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
 
 
 @app.get("/")

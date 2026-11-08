@@ -6,7 +6,8 @@ FastAPI service backed by PostgreSQL and Redis.
 ## Run the development stack
 
 1. Copy `.env.example` to `.env` and replace the example database password.
-   Keep the password in `POSTGRES_PASSWORD` and `DATABASE_URL` in sync.
+   Keep the password in `POSTGRES_PASSWORD` and `DATABASE_URL` in sync, and
+   replace `SECRET_KEY` with a randomly generated value of at least 32 bytes.
 2. Start the services from the repository root:
 
    ```sh
@@ -30,12 +31,23 @@ docker compose exec backend alembic upgrade head
 ```
 
 Migrations are deliberately not run automatically during API startup. Create
-new revisions from `backend/` with
-`.venv/bin/alembic revision --autogenerate -m "describe the schema change"`.
+new revisions with
+`docker compose exec backend alembic revision --autogenerate -m "describe the schema change"`.
 Review generated revisions before applying them; model classes must be imported
 from `app.models` so they are registered in `Base.metadata`.
 The reversible smoke-test migration is isolated under `backend/tests/migrations`
 and uses its own Alembic version table; it is not part of application upgrades.
+
+## Authentication API
+
+- `POST /api/v1/auth/register` creates a student account.
+- `POST /api/v1/auth/login` returns a short-lived bearer access token.
+- `GET /api/v1/auth/me` returns the authenticated user's public profile.
+
+Send the token in an `Authorization: Bearer <access_token>` header. Registration
+does not accept a role; elevated roles must be assigned through trusted
+administrative workflows. Passwords are stored as Argon2 hashes and never
+returned by the API.
 
 To stop the stack without deleting the database volume, run
 `docker compose down`.

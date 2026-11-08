@@ -4,6 +4,10 @@ from unittest.mock import patch
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("REDIS_URL", "redis://localhost:6379/0")
+os.environ.setdefault(
+    "SECRET_KEY",
+    "unit-test-secret-key-that-is-at-least-32-bytes-long",
+)
 
 from fastapi.testclient import TestClient
 
